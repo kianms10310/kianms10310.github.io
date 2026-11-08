@@ -24,10 +24,8 @@
   }
 
   function initialDate() {
-    const hashDate = decodeURIComponent(location.hash.slice(1));
-    if (trip.dates.includes(hashDate)) return hashDate;
     const today = todayInTripZone();
-    return trip.dates.find(date => date >= today) || trip.dates[trip.dates.length - 1];
+    return trip.dates.includes(today) ? today : trip.dates[0];
   }
 
   let activeDate = initialDate();
@@ -54,7 +52,7 @@
     render();
   }
 
-  async function copyAddress(address) {
+  async function copyAddress(address, label = "주소") {
     try {
       if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(address);
       else {
@@ -67,8 +65,8 @@
         textarea.remove();
         if (!copied) throw new Error("copy failed");
       }
-      toast("주소를 복사했어요.");
-    } catch (_) { toast("복사하지 못했어요. 주소를 길게 눌러 복사해 주세요."); }
+      toast(`${label}를 복사했어요.`);
+    } catch (_) { toast("복사하지 못했어요. 내용을 길게 눌러 복사해 주세요."); }
   }
 
   function formatDate(date) {
@@ -77,11 +75,73 @@
     return {short: `${month}/${day}`, weekday};
   }
 
+  function mapSearchUrl(address) {
+    return `https://map.naver.com/p/search/${encodeURIComponent(address)}`;
+  }
+
+  function candidateMarkup(candidate, index) {
+    const badges = [
+      candidate.category && `<span class="candidate-badge category">${escapeHtml(candidate.category)}</span>`,
+      candidate.menu && `<span class="candidate-badge menu">${escapeHtml(candidate.menu)}</span>`
+    ].filter(Boolean).join("");
+    const hours = candidate.hours ? `<div class="candidate-hours">영업 ${escapeHtml(candidate.hours)}${candidate.lastOrder ? ` · 라스트오더 ${escapeHtml(candidate.lastOrder)}` : ""}</div>` : "";
+    const address = candidate.address ? `<div class="address">${escapeHtml(candidate.address)}</div><div class="candidate-actions"><button class="action" type="button" data-copy-candidate="${escapeHtml(candidate.address)}">주소 복사</button><a class="action map" href="${mapSearchUrl(candidate.address)}" target="_blank" rel="noopener noreferrer">네이버 지도 ↗</a></div>` : `<div class="candidate-note">장소가 정해지면 주소와 지도를 추가할 예정입니다.</div>`;
+    return `<div class="candidate"><div class="candidate-heading"><span>후보 ${index + 1}</span><strong>${escapeHtml(candidate.name)}</strong></div><div class="candidate-badges">${badges}</div>${hours}${address}</div>`;
+  }
+
   function itemMarkup(item) {
     const state = statuses[item.id] || "pending";
-    const address = item.address ? `<div class="address">${escapeHtml(item.address)}</div>` : "";
-    const addressActions = item.address ? `<button class="action" type="button" data-copy="${escapeHtml(item.id)}">주소 복사</button><a class="action map" href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(item.address)}" target="_blank" rel="noopener noreferrer">지도 보기 ↗</a>` : "";
-    return `<article class="item ${state === "pending" ? "" : state}"><div class="item-head"><span class="time">${escapeHtml(item.time)}</span><span class="type">${escapeHtml(item.type)}</span></div><h3>${escapeHtml(item.title)}</h3>${item.detail ? `<p class="detail">${escapeHtml(item.detail)}</p>` : ""}${address}<div class="actions">${addressActions}<button class="state done ${state === "done" ? "active" : ""}" type="button" data-state="done" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "done"}">${state === "done" ? "✓ 완료됨" : "✓ 완료"}</button><button class="state missed ${state === "missed" ? "active" : ""}" type="button" data-state="missed" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "missed"}">${state === "missed" ? "↪ 못함 등록됨" : "↪ 못함"}</button></div></article>`;
+    const location = item.address || item.mapQuery;
+    const address = location ? `<div class="address">${item.address ? "" : "지도 검색어 · "}${escapeHtml(location)}</div>` : "";
+    const addressActions = location ? `<button class="action" type="button" data-copy="${escapeHtml(item.id)}">${item.address ? "주소" : "검색어"} 복사</button><a class="action map" href="${mapSearchUrl(item.mapQuery || location)}" target="_blank" rel="noopener noreferrer">네이버 지도 ↗</a>` : "";
+    const candidates = item.candidates?.length ? `<div class="candidates">${item.candidates.map(candidateMarkup).join("")}</div>` : "";
+    const transport = item.transport ? `<span class="type transport">${escapeHtml(item.transport)}</span>` : "";
+    const menu = item.menu ? `<span class="type menu">${escapeHtml(item.menu)}</span>` : "";
+    const hours = item.hours ? `<div class="operating-hours">운영 ${escapeHtml(item.hours)}</div>` : "";
+    return `<article class="item ${state === "pending" ? "" : state}"><div class="item-head"><span class="time">${escapeHtml(item.time)}</span><span class="type">${escapeHtml(item.type)}</span>${transport}${menu}</div><h3>${escapeHtml(item.title)}</h3>${hours}${item.detail ? `<p class="detail">${escapeHtml(item.detail)}</p>` : ""}${address}${candidates}<div class="actions">${addressActions}<button class="state done ${state === "done" ? "active" : ""}" type="button" data-state="done" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "done"}">${state === "done" ? "✓ 완료됨" : "✓ 완료"}</button><button class="state missed ${state === "missed" ? "active" : ""}" type="button" data-state="missed" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "missed"}">${state === "missed" ? "↪ 못함 등록됨" : "↪ 못함"}</button></div></article>`;
+  }
+
+  function mapPointsForDay(items) {
+    const points = [];
+    for (const item of items) {
+      if (item.coords) points.push({title: item.title, time: item.time, coords: item.coords, query: item.mapQuery || item.address || item.title, alternative: false});
+      for (const candidate of item.candidates || []) {
+        if (candidate.coords) points.push({title: candidate.name, time: item.time, coords: candidate.coords, query: candidate.mapQuery || candidate.address || candidate.name, alternative: true});
+      }
+    }
+    return points;
+  }
+
+  let dayMap = null;
+  let mappedDate = null;
+
+  function renderMap(items) {
+    if (mappedDate === activeDate) return;
+    if (dayMap) { dayMap.remove(); dayMap = null; }
+    mappedDate = activeDate;
+    const points = mapPointsForDay(items);
+    const section = $("#day-map-section");
+    section.hidden = points.length === 0;
+    if (!points.length) return;
+    $("#map-count").textContent = `${points.length}곳 표시`;
+    $("#map-places").innerHTML = points.map((point, index) => `<li><a href="${mapSearchUrl(point.query)}" target="_blank" rel="noopener noreferrer"><span class="map-place-number ${point.alternative ? "alternative" : ""}">${index + 1}</span><span class="map-place-label">${escapeHtml(point.title)}</span><span class="map-place-time">${escapeHtml(point.time)}</span></a></li>`).join("");
+    const container = $("#day-map");
+    if (!window.L) { container.innerHTML = '<div class="map-unavailable">지도를 불러오지 못했어요. 아래 장소 목록을 이용해 주세요.</div>'; return; }
+    container.innerHTML = "";
+    const touchDevice = window.matchMedia?.("(pointer: coarse)").matches;
+    dayMap = L.map(container, {scrollWheelZoom: false, zoomControl: false, dragging: !touchDevice, touchZoom: !touchDevice});
+    L.control.zoom({position: "bottomright"}).addTo(dayMap);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(dayMap);
+    for (const [index, point] of points.entries()) {
+      const icon = L.divIcon({className: "", html: `<span class="map-pin ${point.alternative ? "alternative" : ""}">${index + 1}</span>`, iconSize: [28, 28], iconAnchor: [14, 14]});
+      L.marker(point.coords, {icon, title: point.title}).addTo(dayMap).bindPopup(`<span>${escapeHtml(point.time)}</span><strong>${escapeHtml(point.title)}</strong><a href="${mapSearchUrl(point.query)}" target="_blank" rel="noopener noreferrer">네이버 지도에서 열기 ↗</a>`);
+    }
+    const bounds = L.latLngBounds(points.map(point => point.coords));
+    if (points.length === 1) dayMap.setView(points[0].coords, 12);
+    else dayMap.fitBounds(bounds, {padding: [28, 28], maxZoom: 13});
   }
 
   function renderCarryovers() {
@@ -117,21 +177,23 @@
     $("#progress span").style.width = `${percent}%`;
     renderCarryovers();
     $("#timeline").innerHTML = items.length ? items.map(itemMarkup).join("") : `<div class="empty"><strong>아직 등록된 일정이 없어요.</strong><p>다음 일정이 정해지면 이곳에 표시됩니다.</p></div>`;
+    renderMap(items);
   }
 
   document.addEventListener("click", event => {
     const dateButton = event.target.closest("[data-date]");
-    if (dateButton) { activeDate = dateButton.dataset.date; history.replaceState(null, "", `#${activeDate}`); render(); return; }
+    if (dateButton) { activeDate = dateButton.dataset.date; render(); return; }
     const stateButton = event.target.closest("[data-state]");
     if (stateButton) { setState(stateButton.dataset.id, stateButton.dataset.state); return; }
     const resolveButton = event.target.closest("[data-resolve]");
     if (resolveButton) { setState(resolveButton.dataset.resolve, "done"); return; }
+    const candidateCopyButton = event.target.closest("[data-copy-candidate]");
+    if (candidateCopyButton) { copyAddress(candidateCopyButton.dataset.copyCandidate); return; }
     const copyButton = event.target.closest("[data-copy]");
     if (copyButton) {
       const item = allItems.find(entry => entry.id === copyButton.dataset.copy);
-      if (item?.address) copyAddress(item.address);
+      if (item?.address || item?.mapQuery) copyAddress(item.address || item.mapQuery, item.address ? "주소" : "검색어");
     }
   });
-  window.addEventListener("hashchange", () => { const date = location.hash.slice(1); if (trip.dates.includes(date)) { activeDate = date; render(); } });
   render();
 })();
