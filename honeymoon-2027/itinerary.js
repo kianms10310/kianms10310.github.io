@@ -84,6 +84,9 @@ window.TRIP = {
       title: "바르셀로나로 이동",
       summary: "아토차역 출발 · 바르셀로나 산츠역 도착 · 숙소 체크인",
       items: [
+        { id: "d7-checkout", time: "09:15", type: "숙소", title: "Catalonia Atocha 체크아웃", mapQuery: "Catalonia Atocha Madrid" },
+        { id: "d7-walk", time: "09:15", type: "이동", title: "Catalonia Atocha → Desamparados", detail: "도보 이동 · 약 1분", mapQuery: "Desamparados Madrid" },
+        { id: "d7-metro", time: "09:20", type: "이동", title: "Desamparados → Estación de Atocha", detail: "전철 이동 · 약 4분", mapQuery: "Estación de Atocha Madrid" },
         { id: "d7-station", time: "09:30", type: "이동", title: "마드리드 아토차역 도착", mapQuery: "Madrid Puerta de Atocha station", coords: [40.4056837, -3.6900187] },
         { id: "d7-train", time: "10:32–13:50", type: "열차", title: "마드리드 아토차역 → 바르셀로나 산츠역", mapQuery: "Barcelona Sants station", coords: [41.3790068, 2.1400042] },
         { id: "d7-hotel", time: "15:00", type: "숙소", title: "Catalonia Square 체크인", detail: "체크인 15:00 / 체크아웃 12:00 · 조식 미포함 · 무료 취소 2027.06.09 23:59까지 · 예약자 신진욱", address: "Rda. de Sant Pere, 9, Eixample, 08010 Barcelona, Spain", stay: true, phone: "+34 93 302 33 86", coords: [41.3885588, 2.1712865] }
@@ -93,8 +96,9 @@ window.TRIP = {
     "2027-06-14": { title: "9일차", summary: "세부 일정 미정", items: [] },
     "2027-06-15": {
       title: "바르셀로나 출발",
-      summary: "바르셀로나 공항 · 인천행 항공편",
+      summary: "공항버스 · 바르셀로나 공항 · 인천행 항공편",
       items: [
+        { id: "d10-aerobus", time: "17:30", type: "이동", title: "Parada Aerobus A1에서 공항버스 탑승", detail: "편도 1인 7.75유로 · 카드 결제", address: "Pl. Catalunya - Andana Central, 08002, Barcelona, 스페인", phone: "+34933841758" },
         { id: "d10-airport", time: "18:00", type: "이동", title: "바르셀로나 공항 도착", mapQuery: "Barcelona El Prat Airport", coords: [41.2969440, 2.0790474] },
         { id: "d10-flight", time: "20:50–다음 날 16:20", type: "항공", title: "바르셀로나 → 인천", detail: "아시아나 OZ512 · 인천 도착은 6/16 한국 시각", mapQuery: "Barcelona El Prat Airport" }
       ]
