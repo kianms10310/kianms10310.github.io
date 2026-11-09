@@ -89,6 +89,33 @@
     return `<div class="phone">전화 <a href="tel:${dial}">${escapeHtml(phone)}</a></div>`;
   }
 
+  function detailMarkup(detail) {
+    if (!detail) return "";
+    const lines = detail.split(" · ");
+    if (lines.length === 1) return `<p class="detail">${escapeHtml(detail)}</p>`;
+    return `<ul class="detail-list">${lines.map(line => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`;
+  }
+
+  function stayMarkup(item) {
+    const fields = (item.detail || "").split(" · ").filter(Boolean).map(line => {
+      if (line.startsWith("체크인 ")) {
+        const times = line.match(/^체크인 (.+?) \/ 체크아웃 (.+)$/);
+        if (times) return ["체크인 · 아웃", `${times[1]} / ${times[2]}`];
+      }
+      if (/^\d+\/\d+–\d+\/\d+/.test(line)) return ["숙박", line];
+      for (const label of ["조식", "무료 취소", "레스토랑", "주차", "수영장", "사우나", "예약자"]) {
+        if (line.startsWith(label + " ")) return [label, line.slice(label.length + 1)];
+      }
+      return ["안내", line];
+    });
+    if (item.address) fields.push(["주소", item.address]);
+    if (item.phone) {
+      const dial = String(item.phone).replace(/[^\d+]/g, "");
+      fields.push(["전화", `<a href="tel:${dial}">${escapeHtml(item.phone)}</a>`, true]);
+    }
+    return `<dl class="stay-info">${fields.map(([label, value, isHtml]) => `<div class="stay-row"><dt>${escapeHtml(label)}</dt><dd>${isHtml ? value : escapeHtml(value)}</dd></div>`).join("")}</dl>`;
+  }
+
   function candidateMarkup(candidate, index) {
     const badges = [
       candidate.category && `<span class="candidate-badge category">${escapeHtml(candidate.category)}</span>`,
@@ -109,7 +136,8 @@
     const transport = item.transport ? `<span class="type transport">${escapeHtml(item.transport)}</span>` : "";
     const menu = item.menu ? `<span class="type menu">${escapeHtml(item.menu)}</span>` : "";
     const hours = item.hours ? `<div class="operating-hours">운영 ${escapeHtml(item.hours)}</div>` : "";
-    return `<article class="item ${state === "pending" ? "" : state}"><div class="item-head"><span class="time">${escapeHtml(item.time)}</span><span class="type">${escapeHtml(item.type)}</span>${transport}${menu}</div><h3>${escapeHtml(item.title)}</h3>${hours}${item.detail ? `<p class="detail">${escapeHtml(item.detail)}</p>` : ""}${address}${phoneMarkup(item.phone)}${candidates}<div class="actions">${addressActions}<button class="state done ${state === "done" ? "active" : ""}" type="button" data-state="done" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "done"}">${state === "done" ? "✓ 완료됨" : "✓ 완료"}</button><button class="state missed ${state === "missed" ? "active" : ""}" type="button" data-state="missed" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "missed"}">${state === "missed" ? "↪ 못함 등록됨" : "↪ 못함"}</button></div></article>`;
+    const details = item.stay ? stayMarkup(item) : `${detailMarkup(item.detail)}${address}${phoneMarkup(item.phone)}`;
+    return `<article class="item ${state === "pending" ? "" : state}"><div class="item-head"><span class="time">${escapeHtml(item.time)}</span><span class="type">${escapeHtml(item.type)}</span>${transport}${menu}</div><h3>${escapeHtml(item.title)}</h3>${hours}${details}${candidates}<div class="actions">${addressActions}<button class="state done ${state === "done" ? "active" : ""}" type="button" data-state="done" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "done"}">${state === "done" ? "✓ 완료됨" : "✓ 완료"}</button><button class="state missed ${state === "missed" ? "active" : ""}" type="button" data-state="missed" data-id="${escapeHtml(item.id)}" aria-pressed="${state === "missed"}">${state === "missed" ? "↪ 못함 등록됨" : "↪ 못함"}</button></div></article>`;
   }
 
   function mapPointsForDay(items) {

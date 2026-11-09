@@ -80,9 +80,18 @@ main { padding: 27px 20px 56px; }
 .item h3 { margin: 7px 0 0; font-size: 18px; font-weight: 800; letter-spacing: -.04em; line-height: 1.4; }
 .operating-hours { margin-top: 7px; color: #697a70; font-size: 12px; font-weight: 700; }
 .detail { margin: 7px 0 0; color: #697a70; font-size: 13px; line-height: 1.65; }
+.detail-list { margin: 12px 0 0; padding: 2px 12px; border: 1px solid #e6ece6; border-radius: 10px; background: #fafcf9; color: #5d7064; font-size: 13px; line-height: 1.5; list-style: none; }
+.detail-list li { padding: 9px 0; }
+.detail-list li + li { border-top: 1px solid #e6ece6; }
 .address { margin-top: 12px; padding: 10px 12px; border-radius: 9px; background: #f6f8f5; color: #65776c; font-size: 12px; line-height: 1.5; word-break: keep-all; }
 .phone { margin-top: 9px; color: #65776c; font-size: 12px; font-weight: 700; }
 .phone a { margin-left: 5px; color: #177a5d; text-decoration: underline; text-underline-offset: 2px; }
+.stay-info { margin: 13px 0 0; padding: 0 13px; border: 1px solid #e1eae3; border-radius: 11px; background: #fafcf9; }
+.stay-row { display: grid; grid-template-columns: 94px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; font-size: 12px; line-height: 1.55; }
+.stay-row + .stay-row { border-top: 1px solid #e6ece6; }
+.stay-row dt { color: #718479; font-weight: 750; }
+.stay-row dd { min-width: 0; margin: 0; color: #344c3d; font-weight: 650; overflow-wrap: anywhere; }
+.stay-row a { color: #177a5d; font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
 .candidates { display: grid; gap: 9px; margin-top: 14px; }
 .candidate { padding: 13px; border: 1px solid #e4ece6; border-radius: 11px; background: #fbfdfb; }
 .candidate-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px; }
