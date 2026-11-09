@@ -26,8 +26,8 @@ window.TRIP = {
         { id: "d2-checkout", time: "10:20", type: "숙소", title: "BAH 호텔 체크아웃" },
         { id: "d2-airport", time: "10:40–10:50", type: "이동", title: "호텔 셔틀 → 바르셀로나 공항", detail: "10:40 셔틀 탑승 · 10:50 공항 도착 예정", mapQuery: "Barcelona El Prat Airport" },
         { id: "d2-flight", time: "13:40–14:40", type: "항공", title: "바르셀로나 → 팔마", detail: "Ryanair FR1342 · 20kg 수하물 / 작은 가방 1개", mapQuery: "Palma de Mallorca Airport" },
-        { id: "d2-arrival", time: "14:40", type: "도착", title: "팔마 공항 도착", detail: "렌터카 업체로 이동", mapQuery: "Palma de Mallorca Airport" },
-        { id: "d2-rental", time: "15:00", type: "렌터카", title: "렌터카 대여", detail: "업체 및 인수 장소 미정" },
+        { id: "d2-arrival", time: "14:40", type: "도착", title: "팔마 공항 도착", detail: "Record Go 렌터카 업체로 이동", mapQuery: "Palma de Mallorca Airport" },
+        { id: "d2-rental", time: "15:00", type: "렌터카", title: "Record Go 렌터카 대여", detail: "차량: CDAH · 대여기간: 2027.06.07 15:00–2027.06.10 14:00 · 인수 장소: Record Go", mapQuery: "Record Go Palma de Mallorca Airport" },
         { id: "d2-hotel", time: "16:00", type: "숙소", title: "Hotel Rural Es Riquers 체크인", detail: "6/7–6/9, 2박 · 체크인 15:00 / 체크아웃 11:00 · 조식 포함(08:00–10:30) · 무료 취소 2027.05.31 23:59까지 · 레스토랑 스낵 12:00–15:00, 디너 19:00–21:30 · 예약자 봉한슬", address: "Ctra. Llucmajor–Porreres, km 9,3, 07260 Porreres, Illes Balears, Spain", mapQuery: "Hotel Rural Es Riquers Mallorca", stay: true, phone: "+34 971 166 689" }
       ]
     },
@@ -62,8 +62,8 @@ window.TRIP = {
         { id: "d5-checkout", time: "09:00", type: "숙소", title: "Alcázar Hotel Sóller 체크아웃" },
         { id: "d5-parking", time: "10:00", type: "주차", title: "팔마 주차장", address: "Avinguda de Gabriel Roca, Centre, 07001 Palma, Illes Balears, Spain" },
         { id: "d5-cathedral", time: "10:30", type: "관광", title: "팔마 대성당", address: "Plaça de la Seu, s/n, Centre, 07001 Palma, Illes Balears, Spain" },
-        { id: "d5-return", time: "13:00", type: "렌터카", title: "렌터카 반납", detail: "반납 장소와 세부 일정 미정" },
-        { id: "d5-airport", time: "14:00", type: "이동", title: "팔마 공항 도착", mapQuery: "Palma de Mallorca Airport" },
+        { id: "d5-return", time: "14:00", type: "렌터카", title: "Record Go 렌터카 반납", detail: "예약 반납 2027.06.10 14:00 · 반납 장소: 팔마 공항 Record Go", mapQuery: "Record Go Palma de Mallorca Airport" },
+        { id: "d5-airport", time: "반납 후", type: "이동", title: "팔마 공항 도착", mapQuery: "Palma de Mallorca Airport" },
         { id: "d5-flight", time: "16:00–17:30", type: "항공", title: "팔마 → 마드리드", detail: "Ryanair FR403 · 20kg 수하물 / 작은 가방 1개", mapQuery: "Madrid Barajas Airport" },
         { id: "d5-arrival", time: "17:30", type: "도착", title: "마드리드 공항 도착", mapQuery: "Madrid Barajas Airport" },
         { id: "d5-transfer", time: "18:30", type: "이동", title: "Catalonia Atocha로 이동", detail: "택시: 정찰제 33유로, 약 30분 · 203번 버스: 5유로, 약 30–40분, 매시 00·15·30·45분 운행", mapQuery: "Catalonia Atocha Madrid" },
