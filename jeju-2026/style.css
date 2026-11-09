@@ -81,6 +81,8 @@ main { padding: 27px 20px 56px; }
 .operating-hours { margin-top: 7px; color: #697a70; font-size: 12px; font-weight: 700; }
 .detail { margin: 7px 0 0; color: #697a70; font-size: 13px; line-height: 1.65; }
 .address { margin-top: 12px; padding: 10px 12px; border-radius: 9px; background: #f6f8f5; color: #65776c; font-size: 12px; line-height: 1.5; word-break: keep-all; }
+.phone { margin-top: 9px; color: #65776c; font-size: 12px; font-weight: 700; }
+.phone a { margin-left: 5px; color: #177a5d; text-decoration: underline; text-underline-offset: 2px; }
 .candidates { display: grid; gap: 9px; margin-top: 14px; }
 .candidate { padding: 13px; border: 1px solid #e4ece6; border-radius: 11px; background: #fbfdfb; }
 .candidate-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px; }
