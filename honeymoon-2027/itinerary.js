@@ -35,7 +35,7 @@ window.TRIP = {
       title: "칼로 데스 모로",
       summary: "조식 후 해변 방문",
       items: [
-        { id: "d3-breakfast", time: "08:00", type: "조식", title: "숙소 조식" },
+        { id: "d3-breakfast", time: "08:00", type: "조식", title: "조식" },
         { id: "d3-calo", time: "10:00", type: "관광", title: "Calo Des Moro", address: "Carrer des Calo des Moro, 07650 Santanyi, Majorca, Spain", mapQuery: "Calo Des Moro Mallorca", coords: [39.3136990, 3.1216020] }
       ]
     },
@@ -43,7 +43,7 @@ window.TRIP = {
       title: "발데모사와 데이아",
       summary: "숙소 이동 · 발데모사 · 데이아",
       items: [
-        { id: "d4-breakfast", time: "08:00", type: "조식", title: "숙소 조식" },
+        { id: "d4-breakfast", time: "08:00", type: "조식", title: "조식" },
         { id: "d4-checkout", time: "09:30", type: "숙소", title: "Hotel Rural Es Riquers 체크아웃" },
         { id: "d4-hotel", time: "10:30", type: "이동", title: "Alcázar Hotel Sóller 방향으로 이동", detail: "체크인 14:00 / 체크아웃 11:00 · 조식 포함(07:30–10:30) · 무료 취소 2027.06.01 23:59까지 · 주차 약 18유로/박 · 수영장 09:00–20:00 · 사우나 사전 예약 필요(종료 시간 확인 필요) · 예약자 봉한슬", address: "Carrer de sa Romaguera, 25, 07100 Sóller, Illes Balears, Spain", stay: true, phone: "+34 971 18 86 86", coords: [39.7679401, 2.7139660] },
         { id: "d4-valldemossa", time: "11:30", type: "주차", title: "발데모사 주차장", address: "Avinguda Arxiduc Lluís Salvador, 07170 Valldemossa, Illes Balears, Spain", coords: [39.7100039, 2.6204493] },
@@ -58,7 +58,7 @@ window.TRIP = {
       title: "팔마에서 마드리드로",
       summary: "팔마 대성당 · 렌터카 반납 · 마드리드행 항공편",
       items: [
-        { id: "d5-breakfast", time: "07:30", type: "조식", title: "숙소 조식" },
+        { id: "d5-breakfast", time: "07:30", type: "조식", title: "조식" },
         { id: "d5-checkout", time: "09:00", type: "숙소", title: "Alcázar Hotel Sóller 체크아웃" },
         { id: "d5-parking", time: "10:00", type: "주차", title: "팔마 주차장", address: "Avinguda de Gabriel Roca, Centre, 07001 Palma, Illes Balears, Spain", coords: [39.5669209, 2.6450589] },
         { id: "d5-cathedral", time: "10:30", type: "관광", title: "팔마 대성당", address: "Plaça de la Seu, s/n, Centre, 07001 Palma, Illes Balears, Spain", coords: [39.5674732, 2.6481680] },
