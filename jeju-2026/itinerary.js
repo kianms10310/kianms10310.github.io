@@ -45,7 +45,7 @@ window.TRIP = {
       summary: "체크아웃, 고기국수 아침, 렌터카 반납 후 귀가",
       items: [
         { id: "d4-checkout", time: "08:00", type: "숙소", title: "더 시에나 리조트 체크아웃", address: "제주 서귀포시 용흥로66번길 158-8 더 시에나 리조트", mapUrl: "https://naver.me/xKERqjq1", coords: [33.2648, 126.4849] },
-        { id: "d4-breakfast", time: "08:00", type: "아침", title: "국수바다 서귀포본점", menu: "고기국수", address: "제주 서귀포시 일주서로 580", hours: "08:00–21:00", coords: [33.253023, 126.447197] },
+        { id: "d4-breakfast", time: "08:00", type: "아침", title: "국수바다 서귀포본점", menu: "고기국수", address: "제주 서귀포시 일주서로 580", mapUrl: "https://naver.me/IDFUgaSy", hours: "08:00–21:00", coords: [33.253023, 126.447197] },
         { id: "d4-return", time: "10:00", type: "렌터카", title: "차량 반납 및 셔틀 탑승", address: "제주 제주시 용해로 119 제주 평화렌터카", coords: [33.5072118, 126.5051394] },
         { id: "d4-flight", time: "11:45–13:00", type: "항공", title: "제주공항 → 김포공항", detail: "에어서울 RS6408 · 김포공항 13:00 도착 예정", address: "제주 제주시 공항로 2 제주국제공항", coords: [33.5070711, 126.4916441] }
       ]
