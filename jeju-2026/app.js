@@ -81,6 +81,10 @@
       : `https://map.naver.com/p/search/${encodeURIComponent(address)}`;
   }
 
+  function placeMapUrl(place, query) {
+    return place.mapUrl || mapSearchUrl(query);
+  }
+
   const mapLabel = trip.mapProvider === "google" ? "구글 지도 ↗" : "네이버 지도 ↗";
 
   function phoneMarkup(phone) {
@@ -123,7 +127,7 @@
     ].filter(Boolean).join("");
     const hours = candidate.hours ? `<div class="candidate-hours">영업 ${escapeHtml(candidate.hours)}${candidate.lastOrder ? ` · 라스트오더 ${escapeHtml(candidate.lastOrder)}` : ""}</div>` : "";
     const location = candidate.address || candidate.mapQuery;
-    const address = location ? `<div class="address">${escapeHtml(candidate.address || candidate.mapQuery)}</div><div class="candidate-actions"><button class="action" type="button" data-copy-candidate="${escapeHtml(location)}">${candidate.address ? "주소" : "검색어"} 복사</button><a class="action map" href="${mapSearchUrl(candidate.mapQuery || location)}" target="_blank" rel="noopener noreferrer">${mapLabel}</a></div>` : `<div class="candidate-note">장소가 정해지면 주소와 지도를 추가할 예정입니다.</div>`;
+    const address = location ? `<div class="address">${escapeHtml(candidate.address || candidate.mapQuery)}</div><div class="candidate-actions"><button class="action" type="button" data-copy-candidate="${escapeHtml(location)}">${candidate.address ? "주소" : "검색어"} 복사</button><a class="action map" href="${escapeHtml(placeMapUrl(candidate, candidate.mapQuery || location))}" target="_blank" rel="noopener noreferrer">${mapLabel}</a></div>` : `<div class="candidate-note">장소가 정해지면 주소와 지도를 추가할 예정입니다.</div>`;
     return `<div class="candidate"><div class="candidate-heading"><span>후보 ${index + 1}</span><strong>${escapeHtml(candidate.name)}</strong></div><div class="candidate-badges">${badges}</div>${hours}${address}${phoneMarkup(candidate.phone)}</div>`;
   }
 
@@ -131,7 +135,7 @@
     const state = statuses[item.id] || "pending";
     const location = item.address || item.mapQuery;
     const address = location ? `<div class="address">${item.address ? "" : "지도 검색어 · "}${escapeHtml(location)}</div>` : "";
-    const addressActions = location ? `<button class="action" type="button" data-copy="${escapeHtml(item.id)}">${item.address ? "주소" : "검색어"} 복사</button><a class="action map" href="${mapSearchUrl(item.mapQuery || location)}" target="_blank" rel="noopener noreferrer">${mapLabel}</a>` : "";
+    const addressActions = location ? `<button class="action" type="button" data-copy="${escapeHtml(item.id)}">${item.address ? "주소" : "검색어"} 복사</button><a class="action map" href="${escapeHtml(placeMapUrl(item, item.mapQuery || location))}" target="_blank" rel="noopener noreferrer">${mapLabel}</a>` : "";
     const candidates = item.candidates?.length ? `<div class="candidates">${item.candidates.map(candidateMarkup).join("")}</div>` : "";
     const transport = item.transport ? `<span class="type transport">${escapeHtml(item.transport)}</span>` : "";
     const menu = item.menu ? `<span class="type menu">${escapeHtml(item.menu)}</span>` : "";
@@ -143,9 +147,9 @@
   function mapPointsForDay(items) {
     const points = [];
     for (const item of items) {
-      if (item.coords) points.push({title: item.title, time: item.time, coords: item.coords, query: item.mapQuery || item.address || item.title, alternative: false});
+      if (item.coords) points.push({title: item.title, time: item.time, coords: item.coords, query: item.mapQuery || item.address || item.title, mapUrl: item.mapUrl, alternative: false});
       for (const candidate of item.candidates || []) {
-        if (candidate.coords) points.push({title: candidate.name, time: item.time, coords: candidate.coords, query: candidate.mapQuery || candidate.address || candidate.name, alternative: true});
+        if (candidate.coords) points.push({title: candidate.name, time: item.time, coords: candidate.coords, query: candidate.mapQuery || candidate.address || candidate.name, mapUrl: candidate.mapUrl, alternative: true});
       }
     }
     return points;
@@ -163,7 +167,7 @@
     section.hidden = points.length === 0;
     if (!points.length) return;
     $("#map-count").textContent = `${points.length}곳 표시`;
-      $("#map-places").innerHTML = points.map((point, index) => `<li><a href="${mapSearchUrl(point.query)}" target="_blank" rel="noopener noreferrer"><span class="map-place-number ${point.alternative ? "alternative" : ""}">${index + 1}</span><span class="map-place-label">${escapeHtml(point.title)}</span><span class="map-place-time">${escapeHtml(point.time)}</span></a></li>`).join("");
+      $("#map-places").innerHTML = points.map((point, index) => `<li><a href="${escapeHtml(placeMapUrl(point, point.query))}" target="_blank" rel="noopener noreferrer"><span class="map-place-number ${point.alternative ? "alternative" : ""}">${index + 1}</span><span class="map-place-label">${escapeHtml(point.title)}</span><span class="map-place-time">${escapeHtml(point.time)}</span></a></li>`).join("");
     const container = $("#day-map");
     if (!window.L) { container.innerHTML = '<div class="map-unavailable">지도를 불러오지 못했어요. 아래 장소 목록을 이용해 주세요.</div>'; return; }
     container.innerHTML = "";
@@ -176,7 +180,7 @@
     }).addTo(dayMap);
     for (const [index, point] of points.entries()) {
       const icon = L.divIcon({className: "", html: `<span class="map-pin ${point.alternative ? "alternative" : ""}">${index + 1}</span>`, iconSize: [28, 28], iconAnchor: [14, 14]});
-      L.marker(point.coords, {icon, title: point.title}).addTo(dayMap).bindPopup(`<span>${escapeHtml(point.time)}</span><strong>${escapeHtml(point.title)}</strong><a href="${mapSearchUrl(point.query)}" target="_blank" rel="noopener noreferrer">${mapLabel}</a>`);
+      L.marker(point.coords, {icon, title: point.title}).addTo(dayMap).bindPopup(`<span>${escapeHtml(point.time)}</span><strong>${escapeHtml(point.title)}</strong><a href="${escapeHtml(placeMapUrl(point, point.query))}" target="_blank" rel="noopener noreferrer">${mapLabel}</a>`);
     }
     const bounds = L.latLngBounds(points.map(point => point.coords));
     if (points.length === 1) dayMap.setView(points[0].coords, 12);
